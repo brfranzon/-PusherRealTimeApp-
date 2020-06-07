@@ -58,7 +58,7 @@ fetch(url).
             const chart = new CanvasJS.Chart("chart",
                 {
                     animationEnabled: true,
-                    theme: "theme3",
+                    theme: "theme1",
 
                     title: {
                         text: `Total votes ${totalVotes}`
