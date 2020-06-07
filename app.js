@@ -23,14 +23,14 @@ app.use("/poll", poll);
 
 // connect to DB
 const config = require("./config/db");
-db.connect(config.database,
+db.connect(process.env.MONGODB_URI || config.database,
     { useNewUrlParser: true }, () => {
         console.log("DB Connected...")
     })
 
 
 //Port
-const port = 3000;
-app.listen(port, () => {
+const PORT = process.env.PORT;
+app.listen(PORT || 5000, () => {
     console.log(`Server is working on port ${port}`)
 });
