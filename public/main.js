@@ -12,9 +12,9 @@ form.addEventListener("submit", (e) => {
     const data = { os: choice };
 
     // resquest to the server
-    //let url = "https://franzon-voterealtime.herokuapp.com/poll";
+    let url = "https://franzon-voterealtime.herokuapp.com/poll";
 
-    let url = "http://192.168.1.24:3000/poll"
+   // let url = "http://192.168.1.24:3000/poll"
     fetch(url,
         {
             method: 'post',
@@ -34,7 +34,8 @@ form.addEventListener("submit", (e) => {
 //let url = "https://franzon-voterealtime.herokuapp.com/poll";
 getdata();
 function getdata() {
-    let url = "http://192.168.1.24:3000/poll"
+    //let url = "http://192.168.1.24:3000/poll"
+    let url = "https://franzon-voterealtime.herokuapp.com/poll";
     fetch(url).
         then(res => res.json()).
         then(data => {
