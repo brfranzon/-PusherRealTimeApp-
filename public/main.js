@@ -61,7 +61,7 @@ fetch(url).
                     theme: "theme1",
 
                     title: {
-                        text: `Total votes ${totalVotes}`
+                        text: `Total of votes ${totalVotes}`
                     },
 
                     data: [
