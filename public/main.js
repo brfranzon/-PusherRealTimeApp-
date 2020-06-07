@@ -5,15 +5,16 @@ form.addEventListener("submit", (e) => {
     e.preventDefault();
 
     // which option was checked?
-    const choice = document.querySelector('input[name=os]:checked').value;
+       const choice = document.querySelector('input[name=os]:checked').value;
+
 
     // data to send
     const data = { os: choice };
 
     // resquest to the server
-    let url = "https://franzon-voterealtime.herokuapp.com/poll";
+    //let url = "https://franzon-voterealtime.herokuapp.com/poll";
 
-    //"http://192.168.1.24:3000/poll"
+    let url = "http://192.168.1.24:3000/poll"
     fetch(url,
         {
             method: 'post',
@@ -24,81 +25,92 @@ form.addEventListener("submit", (e) => {
         .then(res => res.json())
         .then(data => console.log(data))
         .catch(err => console.log(err));
+
+    getdata();
 });
 
 
 // read data from server: get request
-let url = "https://franzon-voterealtime.herokuapp.com/poll";
-fetch(url).
-    then(res => res.json()).
-    then(data => {
-        const votes = data.votes;
-        const totalVotes = votes.length;
+//let url = "https://franzon-voterealtime.herokuapp.com/poll";
+getdata();
+function getdata() {
+    let url = "http://192.168.1.24:3000/poll"
+    fetch(url).
+        then(res => res.json()).
+        then(data => {
+            const votes = data.votes;
+            const totalVotes = votes.length;
 
-        // count vote points
-        const voteCounts = votes.reduce(
-            (acc, vote) => (
-                (acc[vote.os] = (acc[vote.os] || 0) + parseInt(vote.points)), acc),
-            {}
-        );
-
-        // canvas js
-        //Initial data points
-        let dataPoints = [
-            { label: "Windows", y: voteCounts.Windows },
-            { label: "MacOS", y: voteCounts.MacOS },
-            { label: "Linux", y: voteCounts.Linux },
-            { label: "Other", y: voteCounts.Other },
-        ];
-
-
-        const chartContainer = document.getElementById("chart");
-
-        if (chart) {
-            const chart = new CanvasJS.Chart("chart",
-                {
-                    animationEnabled: true,
-                    theme: "theme1",
-
-                    title: {
-                        text: `Total of votes ${totalVotes}`
-                    },
-
-                    data: [
-                        {
-                            type: "column",
-                            dataPoints: dataPoints
-                        }
-                    ]
-
-                }
+            // count vote points
+            const voteCounts = votes.reduce(
+                (acc, vote) => (
+                    (acc[vote.os] = (acc[vote.os] || 0) + parseInt(vote.points)), acc),
+                {}
             );
 
-            chart.render();
-            // Enable pusher logging - don't include this in production
-            Pusher.logToConsole = true;
+            // canvas js
+            //Initial data points
+            let dataPoints = [
+                { label: "Windows", y: voteCounts.Windows },
+                { label: "MacOS", y: voteCounts.MacOS },
+                { label: "Linux", y: voteCounts.Linux },
+                { label: "Other", y: voteCounts.Other },
+            ];
 
-            var pusher = new Pusher('af7bbbb7eb67604b0148', {
-                cluster: 'eu'
-            });
+            if (chart) {
 
-            var channel = pusher.subscribe('os-poll');
-            channel.bind('os-vote', function (data) {
+                const chart = new CanvasJS.Chart("chart",
+                    {
+                        animationEnabled: true,
+                        theme: "theme1",
 
-                // add data to the chart
+                        title: {
+                            text: `Anzahl der Wahlen: ${totalVotes}`
+                        },
 
-                dataPoints = dataPoints.map(elem => {
+                        data: [
+                            {
+                                type: "column",
+                                dataPoints: dataPoints
+                            }
+                        ]
 
-                    if (elem.label == data.os) {
-                        elem.y = elem.y + data.points;
-                        return elem;
-                    } else {
-                        return elem;
                     }
-                });
-                chart.render();
+                );
 
-            });
+                chart.render();
+                // Enable pusher logging - don't include this in production
+                Pusher.logToConsole = true;
+
+                var pusher = new Pusher('af7bbbb7eb67604b0148', {
+                    cluster: 'eu'
+                });
+
+                var channel = pusher.subscribe('os-poll');
+                channel.bind('os-vote', function (data) {
+
+                    // add data to the chart
+
+                    dataPoints = dataPoints.map(elem => {
+
+                        if (elem.label == data.os) {
+                            elem.y = elem.y + data.points;
+                            return elem;
+                        } else {
+                            return elem;
+                        }
+                    });
+                    chart.render();
+
+                });
+            }
         }
-    }
-    );
+        );
+}
+
+
+//function togglePopup() {
+//    document.getElementById("popup-1").classList.toggle("active");
+//}
+
+
